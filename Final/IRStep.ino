@@ -67,6 +67,7 @@ void initSM()
   digitalWrite(smEn, LOW);
 }
 
+//set the position of the motor
 void setSMPos(int degree)
 {
   //the optimum drving frequency
@@ -86,6 +87,7 @@ void setSMPos(int degree)
   digitalWrite(smStep,LOW);
 }
 
+//Run the motor in the speed for a very short of time
 void setSMSpeed(int period)
 {
   for(int i=0;i<10;i++)
@@ -97,21 +99,9 @@ void setSMSpeed(int period)
   }
 }
 
-void setup()
+int getIRValue()
 {
-  Serial.begin(9600);
-  initSM();  
+  return analogRead(analogIR);
 }
 
-void loop()
-{
-  int val=0;
-  int smSpeed =0;
-  val = analogRead(analogIR);    // read the input pin
-  
-  //change the speed of steeper motor
-  //calulate the speed
-  smSpeed = 200+5*val;
-  Serial.println(smSpeed);
-  setSMSpeed(smSpeed);
-}
+
