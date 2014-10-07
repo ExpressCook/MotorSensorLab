@@ -1,12 +1,12 @@
 //combine the IR Sensor and stepper motor
 //the stepper motor is controlled using arduino library
 const int analogIR = 0;
-const int smC1 = 13;
-const int smC2 = 12;
-const int smC3 = 11;
-const int smEn = 10;
-const int smStep = 9;
-const int smDir = 8;
+const int smC1 = 28;
+const int smC2 = 30;
+const int smC3 = 32;
+const int smEn = 26;
+const int smStep = 22;
+const int smDir = 24;
 
 enum SMDriveType
 {
