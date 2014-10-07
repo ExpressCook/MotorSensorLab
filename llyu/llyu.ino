@@ -2,12 +2,10 @@
 #include "Time.h" 
 #include "string.h"
 //#include "PID_v1.h"
-#define CONTROL_SPEED 0
-#define CONTROL_POS 1
+int flag_CONTROL_SPEED=0, flag_CONTROL_POS=0;
 
 Encoder motorEncoder(2, 3);
 
-int state = CONTROL_SPEED;
 int pwmPin = 6;
 int motorDriver1 = 5;
 int motorDriver2 = 4;
@@ -20,10 +18,10 @@ long desiredPosition, lastPosition = -999, currentPosition;
 double desiredSpeed, inputSpeed, currentSpeed;
 double Kp = 0.1;
 double Ki = 0.03;
-double Kd = 0.08;
+double Kd = 0.8;
 float pidTerm = 0;                                                            // PID correction
-int error = 0, intError = 0;                                  
-static int last_error = 0; 
+int error_s = 0, intError_s = 0, error_p = 0, intError_p = 0;                                  
+static int last_error_s = 0, last_error_p = 0; 
 
 //PID speedPID(&inputSpeed, &currentSpeed, &desiredSpeed, 500, 100, 500, DIRECT); // input, output, desired_output
 
@@ -43,28 +41,25 @@ int debounce()
   }
 }
 
-int PID(int command, int targetValue, int currentValue)   
-{             // compute PWM value  
-  if (state==CONTROL_SPEED)
-  {
-    error = abs(targetValue) - abs(currentValue); 
-    pidTerm = (Kp * error) + (Ki * last_error) + (Kd * (error - last_error));                            
-    last_error = error;
-    return constrain(command + int(pidTerm), 0, 255);
-  }
-  else if (state==CONTROL_POS)
-  {
-    error = (abs(targetValue) - abs(currentValue));  
-    Serial.print("error=");
-    Serial.print(error);
-    Serial.print("  ");
-    intError = intError + error;
-    pidTerm = 0.01*((3 * error) +(0.01 * intError) + (10 * (error - last_error)));                            
-    last_error = error;
-    
-    return constrain(command + int(pidTerm), -155, 155); 
-  }
+int PID_speed(int inputSpeed, int targetValue, int currentValue)   
+{             
+  error_s = abs(targetValue) - abs(currentValue); 
+  pidTerm = (Kp * error_s) + (Ki * last_error_s) + (Kd * (error_s - last_error_s));                            
+  last_error_s = error_s;
+  return constrain(inputSpeed + int(pidTerm), 0, 255);
+}
+
+int PID_pos(int inputSpeed, int targetValue, int currentValue)   
+{           
+  error_p = (targetValue - currentValue);  
+  Serial.print("error=");
+  Serial.print(error_p);
+  Serial.print("  ");
+  intError_p = intError_p + error_p;
+  pidTerm = 0.1*((30 * error_p) +(0.01 * intError_p) + (180 * (error_p - last_error_p)));                            
+  last_error_p = error_p;
   
+  return constrain(inputSpeed + int(pidTerm), -255, 255); 
 }
 
 void setDutyCycle(int dutyCycle)
@@ -209,38 +204,43 @@ void setup()
 
 void loop()
 {
-  if (state==CONTROL_SPEED)
+  if (flag_CONTROL_SPEED==1)
   {
-    delay(100);
+    delay(10);
     Serial.print("current speed:");
     currentSpeed = getCurrentSpeed();
     Serial.print(currentSpeed);
 
-    inputSpeed = PID(inputSpeed, desiredSpeed, currentSpeed);
+    inputSpeed = PID_speed(inputSpeed, desiredSpeed, currentSpeed);
     Serial.print('\n');
 
     setDutyCycle(inputSpeed);
     setDirection(1);
   }
 
-  if (state==CONTROL_POS)
+  if (flag_CONTROL_POS==1)
   {
-    delay(1);
+    delay(10);
     currentPosition = getCurrentOrientation();
     Serial.print("current degree:");
     Serial.print(currentPosition);
     //Serial.print((currentPosition/2)%360);
     Serial.print("   ");
     
-    inputSpeed = PID(inputSpeed, desiredPosition, currentPosition);
-    Serial.print("Input Speed:");
-    Serial.print(inputSpeed);
-   
+    inputSpeed = PID_pos(inputSpeed, desiredPosition, currentPosition);
+    
     int adjInputSpeed;
     if(abs(inputSpeed)<50) adjInputSpeed = 50;
     else adjInputSpeed = abs(inputSpeed);
-    setDutyCycle(adjInputSpeed);
-    if(inputSpeed>0) setDirection(1);
+    
+    int adjInputSpeed2 = 0;
+    adjInputSpeed2 = PID_speed(adjInputSpeed2, adjInputSpeed, currentSpeed);
+ 
+    Serial.print("Input Speed:");
+    Serial.print(adjInputSpeed2);
+    
+    setDutyCycle(abs(adjInputSpeed2));
+    if(adjInputSpeed2>0) setDirection(1);
     else setDirection(0);
     Serial.print('\n');
   }
@@ -263,16 +263,18 @@ void loop()
     if(!strncmp(commandClass, "DCSpeed", 7)) 
     {
       Serial.print("1111111\n");
-      state = CONTROL_SPEED;
+      flag_CONTROL_SPEED=1;
+      flag_CONTROL_POS=0;
       setNewSpeed_closeloop(commandContent);
-      intError = 0;
-      error=0;
-      last_error=0;
+      intError_s = 0;
+      error_s=0;
+      last_error_s=0;
     }
     if(!strncmp(commandClass, "DCPos", 5)) 
     {
       Serial.print("2222222222\n");
-      state = CONTROL_POS;
+      flag_CONTROL_POS=1;
+      flag_CONTROL_SPEED=0;
       sscanf(commandContent, "%d", &desiredPosition);
       currentPosition = getCurrentOrientation();
       desiredPosition = (currentPosition/720)*720+desiredPosition;
@@ -280,9 +282,9 @@ void loop()
       Serial.print(desiredPosition);   
       Serial.print("   ");
       inputSpeed = 0;
-      intError = 0;
-      error=0;
-      last_error=0;
+      intError_p = 0;
+      error_p=0;
+      last_error_p=0;
     }
     //setNewSpeedAndReport_openloop();
 
