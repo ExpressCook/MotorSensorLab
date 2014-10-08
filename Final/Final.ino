@@ -78,13 +78,13 @@ void loop()
     case 'e':controlSMByIR();
              break;
     case 'f':DCPos();
-             
-             sentFeedBack(getCurrentOrientationRE(),);
+             sentFeedBack(getDCEncoder(),getDCPos());
              break;
     case 'g':DCSpeed();
-             sentFeedBack();
+             sentFeedBack(getDCEncoder(),getDCSpeed());
              break;
     case 'h':DCManual();
+             sentFeedBack(getDCSpeed());
              break; 
   }
    

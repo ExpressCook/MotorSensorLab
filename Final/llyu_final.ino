@@ -323,8 +323,19 @@ void init_DCPos(int DCPosition)
   last_error_s=0;
 }
 
-void init_DCManual()
+int getDCEncoder()
 {
+  return int(getCurrentOrientaionRE() % 100)
+}
+
+int getDCPos()
+{
+  return int(getCurrentOrientaionMotor() % 720);
+}
+
+int getDCSpeed()
+{
+  return int(getDCcurrentSpeed());
 }
 
 
