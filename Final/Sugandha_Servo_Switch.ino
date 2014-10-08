@@ -3,7 +3,7 @@ int PotentiometerVal;
 int ServoPosition;
 int button=3;
 long debouncing_time=50;
-int AvgFilter[100]={0};
+QueueList<int> AvgFilter;
 int sum=0;
 int i=0;
 volatile unsigned long last_millis=0;
@@ -21,16 +21,21 @@ void Servo_Control(int En,int Position)
   {
     if(Position==-1)
   {
-    sum=0;
-    for (i=0;i<100;i++)
+    int x=AvgFilter.pop();
+    sum=sum-x;
+    //AvgFilter.pop();
+    /*for (i=0;i<100;i++)
     {
       AvgFilter[i]=analogRead(pot);
       sum=sum+AvgFilter[i];
-    }
-    int avg=round(sum/100);
+    }*/
+    //int avg=round(sum/100);
     //This condition is when the GUI requests that Servo Motor position be controlled
     //by reading Potentiometer values
-    //PotentiometerVal = analogRead(pot);       // reads the value of the potentiometer (value between 0 and 1023) 
+    PotentiometerVal = analogRead(pot);       // reads the value of the potentiometer (value between 0 and 1023) 
+    AvgFilter.push(PotentiometerVal);
+    sum=sum+PotentiometerVal;
+    int avg=sum/AvgFilter.count();
     ServoPosition = map(avg, 0, 1023, 0, 179);
     servo.write(ServoPosition);                  // sets the servo position according to the scaled value  
     delay(15);
