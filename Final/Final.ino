@@ -78,8 +78,11 @@ void loop()
     case 'e':controlSMByIR();
              break;
     case 'f':DCPos();
+             
+             sentFeedBack(getCurrentOrientationRE(),);
              break;
     case 'g':DCSpeed();
+             sentFeedBack();
              break;
     case 'h':DCManual();
              break; 
@@ -89,12 +92,14 @@ void loop()
 
 void sendFeedBack(int senVal, int posVal)
 {
+  //Serial.print('s');
   Serial.println(senVal);
   Serial.println(posVal);
 }
 
 void sendFeedBack(int posVal)
 {
+  //Serial.print('p');
   Serial.println(posVal);
 }
 
