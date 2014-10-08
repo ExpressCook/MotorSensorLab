@@ -97,12 +97,12 @@ void printCurrentStatus()
 {
   long pos = getCurrentOrientationMotor();
   double s = getDCcurrentSpeed();
-  Serial.print("Current Speed:");
-  Serial.print(s);
-  Serial.print("  ");
-  Serial.print("Current Orientation:");
-  Serial.print((pos/2)%360);
-  Serial.print('\n');
+  //Serial.print("Current Speed:");
+  //Serial.print(s);
+  //Serial.print("  ");
+  //Serial.print("Current Orientation:");
+  //Serial.print((pos/2)%360);
+  //Serial.print('\n');
 }
 
 long getCurrentOrientationMotor()
@@ -165,8 +165,8 @@ void rotateXDegree(int degree)
     timeEnd = second();
     if (timeEnd-timeStart > 5) return;
 
-    Serial.print(timeEnd);
-    Serial.print("   ");
+    //Serial.print(timeEnd);
+    //Serial.print("   ");
     printCurrentStatus();
   }
 }
@@ -266,8 +266,8 @@ void DCSpeed()
   delay(10);
   Serial.print("current speed:");
   DCcurrentSpeed = getDCcurrentSpeed();
-  Serial.print(DCcurrentSpeed);
-  Serial.print("   ");
+  //Serial.print(DCcurrentSpeed);
+  //Serial.print("   ");
 
   DCinputSpeed = PID_speed(DCinputSpeed, DCdesiredSpeed, DCcurrentSpeed);
  

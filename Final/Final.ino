@@ -3,8 +3,11 @@
 #include "Time.h" 
 #include "string.h"
 
-//global
+//global Values
 boolean isFirstTimeSMPos = true;
+//Servo value
+int PotentiometerVal;
+int ServoPosition;
 
 //integration
 void setup()
@@ -62,8 +65,10 @@ void loop()
   switch(state)
   {
     case 'a':Servo_Control(1,controlValue);
+             sendFeedBack(ServoPosition);
              break;
     case 'b':Servo_Control(1,-1);
+             sendFeedBack(PotentiometerVal, ServoPosition);
              break;
     case 'c':setSMPos(controlValue);
              //send back the value
@@ -80,6 +85,17 @@ void loop()
              break; 
   }
    
+}
+
+void sendFeedBack(int senVal, int posVal)
+{
+  Serial.println(senVal);
+  Serial.println(posVal);
+}
+
+void sendFeedBack(int posVal)
+{
+  Serial.println(posVal);
 }
 
 

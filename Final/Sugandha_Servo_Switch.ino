@@ -1,6 +1,4 @@
 int pot = A1;  // analog pin used to connect the potentiometer
-int PotentiometerVal;
-int ServoPosition;
 int button=3;
 long debouncing_time=50;
 volatile unsigned long last_millis=0;
