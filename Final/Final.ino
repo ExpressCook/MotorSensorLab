@@ -1,3 +1,11 @@
+#include <Servo.h>
+#include "Encoder.h"
+#include "Time.h" 
+#include "string.h"
+
+//global
+boolean isFirstTimeSMPos = true;
+
 //integration
 void setup()
 {
@@ -7,8 +15,11 @@ void setup()
   initSM();
 
   //initial the DC motor
+  initDC();
   
-  //inital the Servo  
+  //inital the Servo 
+  initServo();
+  attachInterrupt(0,debounceSwitch,CHANGE);
 }
 
 int state = 0;
@@ -21,7 +32,7 @@ int state = 0;
 //g gui dc vel
 //h dc
 int controlValue = 0;
-boolean isFirstTimeSMPos = true;
+
 
 void loop()
 {
@@ -35,26 +46,38 @@ void loop()
       case 'a':
       case 'c': isFirstTimeSMPos = true;
       case 'd':
-      case 'f':
+      case 'f': 
       case 'g': controlValue = Serial.parseInt();
                 break;
-    }   
+    }
+     
+     //special init for DC motor
+     //need to be improved
+    if(state == 'f')
+       init_DCPos(controlValue);
+    if(state == 'g')
+       init_DCSpeed(controlValue);  
   }
   
   switch(state)
   {
-    case 'a':break;
-    case 'b':break;
+    case 'a':Servo_Control(1,controlValue);
+             break;
+    case 'b':Servo_Control(1,-1);
+             break;
     case 'c':setSMPos(controlValue);
-           //send back the value
-           break;
+             //send back the value
+             break;
     case 'd':setSMSpeed(controlValue);
-           break;
+             break;
     case 'e':controlSMByIR();
-           break;
-    case 'f':break;
-    case 'g':break;
-    case 'h':break;
+             break;
+    case 'f':DCPos();
+             break;
+    case 'g':DCSpeed();
+             break;
+    case 'h':DCManual();
+             break; 
   }
    
 }
