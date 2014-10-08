@@ -70,21 +70,25 @@ void initSM()
 //set the position of the motor
 void setSMPos(int degree)
 {
-  //the optimum drving frequency
-  int period = 1500;
-  
-  //calculate the steps
-  int steps= degree/1.8;  //based on half-step
-  
-  for(int i=0;i<steps;i++)
+  if(isFirstTimeSMPos)
   {
-    digitalWrite(smStep,LOW);
-    delayMicroseconds(period);
-    digitalWrite(smStep,HIGH);
-    delayMicroseconds(period);
-  }
+    //the optimum drving frequency
+    int period = 1500;
+  
+    //calculate the steps
+    int steps= degree/1.8;  //based on half-step
+  
+    for(int i=0;i<steps;i++)
+    {
+      digitalWrite(smStep,LOW);
+      delayMicroseconds(period);
+      digitalWrite(smStep,HIGH);
+      delayMicroseconds(period);
+    }
   
   digitalWrite(smStep,LOW);
+  }
+  isFirstTimeSMPos = false;
 }
 
 //Run the motor in the speed for a very short of time
@@ -97,11 +101,26 @@ void setSMSpeed(int period)
     digitalWrite(smStep,HIGH);
     delayMicroseconds(period);
   }
+  
+  Serial.println(period);
 }
 
+//get the value from the IR sensor
 int getIRValue()
 {
   return analogRead(analogIR);
+}
+
+//using IR to control speed
+void controlSMByIR()
+{
+  int val = getIRValue();    
+  //change the speed of steeper motor
+  //calulate the speed
+  int smSpeed = 500+5*val;
+  
+  Serial.println(smSpeed);
+  setSMSpeed(smSpeed);
 }
 
 

@@ -1,5 +1,4 @@
 //integration
-
 void setup()
 {
   Serial.begin(9600);
@@ -12,15 +11,52 @@ void setup()
   //inital the Servo  
 }
 
+int state = 0;
+//a gui servo pos
+//b servo
+//c gui stepper pos
+//d gui stepper vel
+//e stepper
+//f gui dc pos
+//g gui dc vel
+//h dc
+int controlValue = 0;
+boolean isFirstTimeSMPos = true;
+
 void loop()
 {
-  int val=0;
-  int smSpeed =0; 
-  val = getIRValue();  
+  if(Serial.available())
+  {
+    //parse the serial and change the state
+    state = Serial.read(); //state is decided by the first byte
+    
+    switch(state)
+    {
+      case 'a':
+      case 'c': isFirstTimeSMPos = true;
+      case 'd':
+      case 'f':
+      case 'g': controlValue = Serial.parseInt();
+                break;
+    }   
+  }
   
-  //change the speed of steeper motor
-  //calulate the speed
-  smSpeed = 200+5*val;
-  Serial.println(smSpeed);
-  setSMSpeed(smSpeed);
+  switch(state)
+  {
+    case 'a':break;
+    case 'b':break;
+    case 'c':setSMPos(controlValue);
+           //send back the value
+           break;
+    case 'd':setSMSpeed(controlValue);
+           break;
+    case 'e':controlSMByIR();
+           break;
+    case 'f':break;
+    case 'g':break;
+    case 'h':break;
+  }
+   
 }
+
+
