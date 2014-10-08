@@ -68,6 +68,7 @@ void initSM()
 }
 
 //set the position of the motor
+int SMPos =0;
 void setSMPos(int degree)
 {
   if(isFirstTimeSMPos)
@@ -87,13 +88,18 @@ void setSMPos(int degree)
     }
   
   digitalWrite(smStep,LOW);
+  SMPos = (SMPos + degree)%360;
+
   }
   isFirstTimeSMPos = false;
 }
 
 //Run the motor in the speed for a very short of time
-void setSMSpeed(int period)
+int SMSpeed = 0;
+void setSMSpeed(int smSpeed)
 {
+  int period = 40000/smSpeed;
+  SMSpeed = smSpeed;
   for(int i=0;i<10;i++)
   {
     digitalWrite(smStep,LOW);
@@ -102,7 +108,16 @@ void setSMSpeed(int period)
     delayMicroseconds(period);
   }
   
-  Serial.println(period);
+}
+
+int getSMSpeed()
+{
+  return SMSpeed;
+}
+
+int getSMPos()
+{
+  return SMPos;
 }
 
 //get the value from the IR sensor
@@ -117,9 +132,8 @@ void controlSMByIR()
   int val = getIRValue();    
   //change the speed of steeper motor
   //calulate the speed
-  int smSpeed = 500+5*val;
+  int smSpeed = 5+val/15;
   
-  Serial.println(smSpeed);
   setSMSpeed(smSpeed);
 }
 

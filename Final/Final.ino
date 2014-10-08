@@ -2,7 +2,6 @@
 #include "Encoder.h"
 #include "Time.h" 
 #include "string.h"
-#include <QueueList.h>
 #include <iostream>
 
 //global Values
@@ -73,20 +72,22 @@ void loop()
              sendFeedBack(PotentiometerVal, ServoPosition);
              break;
     case 'c':setSMPos(controlValue);
-             //send back the value
+             sendFeedBack(getSMPos());
              break;
     case 'd':setSMSpeed(controlValue);
+             sendFeedBack(getSMSpeed());
              break;
     case 'e':controlSMByIR();
+             sendFeedBack(getIRValue(),getSMSpeed());
              break;
     case 'f':DCPos();
-             sentFeedBack(getDCEncoder(),getDCPos());
+             sendFeedBack(getDCPos());
              break;
     case 'g':DCSpeed();
-             sentFeedBack(getDCEncoder(),getDCSpeed());
+             sendFeedBack(getDCSpeed());
              break;
     case 'h':DCManual();
-             sentFeedBack(getDCSpeed());
+             sendFeedBack(getDCEncoder(),getDCSpeed());
              break; 
   }
    

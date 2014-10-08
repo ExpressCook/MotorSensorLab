@@ -264,7 +264,7 @@ void loopDC()
 void DCSpeed()
 {
   delay(10);
-  Serial.print("current speed:");
+  //Serial.print("current speed:");
   DCcurrentSpeed = getDCcurrentSpeed();
   //Serial.print(DCcurrentSpeed);
   //Serial.print("   ");
@@ -323,14 +323,18 @@ void init_DCPos(int DCPosition)
   last_error_s=0;
 }
 
+void init_DCManual()
+{
+}
+
 int getDCEncoder()
 {
-  return int(getCurrentOrientaionRE() % 100)
+  return int(getCurrentOrientationRE() % 100);
 }
 
 int getDCPos()
 {
-  return int(getCurrentOrientaionMotor() % 720);
+  return int((getCurrentOrientationMotor() % 720)/2);
 }
 
 int getDCSpeed()

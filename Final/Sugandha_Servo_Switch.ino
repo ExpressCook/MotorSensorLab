@@ -1,7 +1,6 @@
-int pot = A1;  // analog pin used to connect the potentiometer
+int pot = A11;  // analog pin used to connect the potentiometer
 int button=3;
 long debouncing_time=50;
-QueueList<int> AvgFilter;
 int AvgFilter[30]={0};
 int sum=0;
 int i=0;
@@ -20,21 +19,6 @@ void Servo_Control(int En,int Position)
   {
     if(Position==-1)
   {
-    int x=AvgFilter.pop();
-    sum=sum-x;
-    //AvgFilter.pop();
-    /*for (i=0;i<100;i++)
-    {
-      AvgFilter[i]=analogRead(pot);
-      sum=sum+AvgFilter[i];
-    }*/
-    //int avg=round(sum/100);
-    //This condition is when the GUI requests that Servo Motor position be controlled
-    //by reading Potentiometer values
-    PotentiometerVal = analogRead(pot);       // reads the value of the potentiometer (value between 0 and 1023) 
-    AvgFilter.push(PotentiometerVal);
-    sum=sum+PotentiometerVal;
-    int avg=sum/AvgFilter.count();
     sum=0;
     for (i=0;i<30;i++)
     {
