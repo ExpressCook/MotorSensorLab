@@ -9,6 +9,11 @@ boolean isFirstTimeSMPos = true;
 //Servo value
 int PotentiometerVal;
 int ServoPosition;
+volatile unsigned int En=1;
+volatile unsigned long last_millis=0;
+long debouncing_time=50;
+
+
 
 //integration
 void setup()
@@ -65,10 +70,10 @@ void loop()
   
   switch(state)
   {
-    case 'a':Servo_Control(1,controlValue);
+    case 'a':Servo_Control(En,controlValue);
              sendFeedBack(ServoPosition);
              break;
-    case 'b':Servo_Control(1,-1);
+    case 'b':Servo_Control(En,-1);
              sendFeedBack(PotentiometerVal, ServoPosition);
              break;
     case 'c':setSMPos(controlValue);
@@ -106,4 +111,13 @@ void sendFeedBack(int posVal)
   Serial.println(posVal);
 }
 
+void debounceSwitch(){
+  //En pin determines whether or not the Servo will be enabled
+  if((long)(millis()-last_millis)>=debouncing_time*10){
+    En=1-En;
+    //Serial.println("butttttton");
+    last_millis=millis();
+  }
+  
+}
 

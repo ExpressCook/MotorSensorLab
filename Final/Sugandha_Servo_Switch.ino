@@ -1,11 +1,8 @@
 int pot = A11;  // analog pin used to connect the potentiometer
-int button=3;
-long debouncing_time=50;
 int AvgFilter[30]={0};
 int sum=0;
 int i=0;
-volatile unsigned long last_millis=0;
-volatile unsigned int En;
+//volatile unsigned int En;
 Servo servo;  //create servo object
 
 void initServo()
@@ -44,10 +41,3 @@ void Servo_Control(int En,int Position)
   
 }
 
-void debounceSwitch(){
-  //En pin determines whether or not the Servo will be enabled
-  if((long)(millis()-last_millis)>=debouncing_time*10){
-    En=1-En;
-    last_millis=millis();
-  }
-}

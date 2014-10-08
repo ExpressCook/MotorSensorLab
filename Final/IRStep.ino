@@ -73,11 +73,17 @@ void setSMPos(int degree)
 {
   if(isFirstTimeSMPos)
   {
+    //control the direction
+    if(degree<=0)
+        digitalWrite(smDir, LOW);
+    else
+        digitalWrite(smDir, HIGH);
+
     //the optimum drving frequency
     int period = 1500;
   
     //calculate the steps
-    int steps= degree/1.8;  //based on half-step
+    int steps= abs(degree/1.8);  //based on full-step
   
     for(int i=0;i<steps;i++)
     {
@@ -87,9 +93,9 @@ void setSMPos(int degree)
       delayMicroseconds(period);
     }
   
-  digitalWrite(smStep,LOW);
-  SMPos = (SMPos + degree)%360;
-
+    digitalWrite(smStep,LOW);
+    digitalWrite(smDir, HIGH);
+    SMPos = (SMPos + degree)%360;
   }
   isFirstTimeSMPos = false;
 }
