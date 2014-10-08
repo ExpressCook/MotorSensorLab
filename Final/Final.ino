@@ -5,8 +5,11 @@
 #include <QueueList.h>
 #include <iostream>
 
-//global
+//global Values
 boolean isFirstTimeSMPos = true;
+//Servo value
+int PotentiometerVal;
+int ServoPosition;
 
 //integration
 void setup()
@@ -64,8 +67,10 @@ void loop()
   switch(state)
   {
     case 'a':Servo_Control(1,controlValue);
+             sendFeedBack(ServoPosition);
              break;
     case 'b':Servo_Control(1,-1);
+             sendFeedBack(PotentiometerVal, ServoPosition);
              break;
     case 'c':setSMPos(controlValue);
              //send back the value
@@ -75,13 +80,29 @@ void loop()
     case 'e':controlSMByIR();
              break;
     case 'f':DCPos();
+             
+             sentFeedBack(getCurrentOrientationRE(),);
              break;
     case 'g':DCSpeed();
+             sentFeedBack();
              break;
     case 'h':DCManual();
              break; 
   }
    
+}
+
+void sendFeedBack(int senVal, int posVal)
+{
+  //Serial.print('s');
+  Serial.println(senVal);
+  Serial.println(posVal);
+}
+
+void sendFeedBack(int posVal)
+{
+  //Serial.print('p');
+  Serial.println(posVal);
 }
 
 
